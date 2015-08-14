@@ -1,0 +1,120 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "c35ebfaddc0ddf89fdc2802a4f122ac6",
+    "packages": [
+        {
+            "name": "joshcam/mysqli-database-class",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joshcam/PHP-MySQLi-Database-Class.git",
+                "reference": "00824c1a210f43863890ff6cd548f87ea5931b70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joshcam/PHP-MySQLi-Database-Class/zipball/00824c1a210f43863890ff6cd548f87ea5931b70",
+                "reference": "00824c1a210f43863890ff6cd548f87ea5931b70",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "MysqliDb.php",
+                    "dbObject.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Campbell",
+                    "email": "josh.lee.campbell@gmail.com",
+                    "homepage": "https://github.com/joshcam",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Alexander V. Butenko",
+                    "email": "a.butenka@gmail.com",
+                    "homepage": "http://smarttechdo.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP MySQL Wrapper and object mapper which utilizes MySQLi and prepared statements",
+            "time": "2015-08-12 21:12:49"
+        },
+        {
+            "name": "telegram-bot/api",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TelegramBot/Api.git",
+                "reference": "e3f4abbd97fc28584922d06ed25f260aee131705"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/e3f4abbd97fc28584922d06ed25f260aee131705",
+                "reference": "e3f4abbd97fc28584922d06ed25f260aee131705",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "*",
+                "phpunit/phpunit": "4.*",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TelegramBot\\Api\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ilya Gusev",
+                    "email": "mail@igusev.ru",
+                    "homepage": "https://php-cat.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Wrapper for Telegram Bot API",
+            "homepage": "https://github.com/TelegramBot/Api",
+            "keywords": [
+                "bot",
+                "bot api",
+                "php",
+                "telegram"
+            ],
+            "time": "2015-06-30 10:29:12"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "joshcam/mysqli-database-class": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

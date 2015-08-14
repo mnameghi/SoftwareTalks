@@ -1,0 +1,6 @@
+{
+    "require": {
+        "joshcam/mysqli-database-class": "dev-master",
+        "telegram-bot/api": "^1.2"
+    }
+}
