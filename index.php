@@ -19,7 +19,7 @@ try {
     $last_name = isset($data['message']['chat']['last_name']) ? $data['message']['chat']['last_name'] : '';
     $username = isset($data['message']['chat']['username']) ? $data['message']['chat']['username'] : '';
 
-    $db->insert('users', array('first_name' => $first_name, 'last_name' => $last_name, 'username' => $username));
+    $db->insert('users', array('ID'=>$chatid, 'first_name' => $first_name, 'last_name' => $last_name, 'username' => $username));
 
     $text = $data['message']['text'];
     $messageid = $data['message']['message_id'];
