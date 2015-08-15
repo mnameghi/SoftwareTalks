@@ -98,6 +98,7 @@ try {
                         error_log($e->getMessage());
                     }
                 }
+				$db->update('admin', array('next_status' => '0'));
                 $bot->sendMessage($chatid, 'پیام مورد نظر ارسال شد');
                 return;
             }
