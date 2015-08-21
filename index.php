@@ -2,9 +2,10 @@
 
 require_once 'vendor/autoload.php';
 require_once 'config/settings.php';
+include('functions.php');
 
+//read input data
 $data = json_decode(file_get_contents('php://input'), true);
-$jsondata = file_get_contents('php://input');
 
 if ($data == null || $data == "" || !isset($data['message'])) die();
 
@@ -14,13 +15,15 @@ $text = '';
 $chatid = '';
 
 try {
+    //catch user info
     $chatid = $data['message']['chat']['id'];
     $first_name = isset($data['message']['chat']['first_name']) ? $data['message']['chat']['first_name'] : '';
     $last_name = isset($data['message']['chat']['last_name']) ? $data['message']['chat']['last_name'] : '';
     $username = isset($data['message']['chat']['username']) ? $data['message']['chat']['username'] : '';
 
-    $db->insert('users', array('ID'=>$chatid, 'first_name' => $first_name, 'last_name' => $last_name, 'username' => $username));
+    $db->insert('users', array('ID' => $chatid, 'first_name' => $first_name, 'last_name' => $last_name, 'username' => $username));
 
+    //catch message data
     $text = $data['message']['text'];
     $messageid = $data['message']['message_id'];
     $updateid = $data['update_id'];
@@ -37,17 +40,18 @@ try {
 
 $text = strtolower($text);
 $bot = new TelegramBot\Api\BotApi(TOKEN);
+
 try {
 
     switch ($text) {
         case '/start' :
-        case '/start@softwaretalk' :
+        case '/start@softwaretalkbot' :
             $message = "سلام\nبه ربات جلسات باز نرم افزاری خوش آمدید.\nجهت اطلاع از جلسه آتی عبارت next را ارسال کنید.";
             $bot->sendMessage($chatid, $message);
             break;
 
         case '/next':
-        case '/next@softwaretalk':
+        case '/next@softwaretalkbot':
         case 'next':
             $db->orderBy('ID', 'DESC');
             $q = $db->getOne('nextMessages');
@@ -55,61 +59,54 @@ try {
             $bot->sendMessage($chatid, $message);
             break;
 
+        case '/about':
+        case '/about@softwaretalkbot':
+        case 'about':
+            $bot->sendMessage($chatid,"من اطلاعات جلسات باز نرم افزاری مشهد را برایتان ارسال میکنم.\n".
+                "سورس من روی گیت هاب قرار دارد. می توانید از طریق لینک زیر آن را مشاهده کنید:\n".
+                "https://github.com/mnameghi/SoftwareTalks");
+            break;
+
+        //set next message
         case COMMAND1:
-        case '/'.COMMAND1:
-            if ($chatid != ADMIN) return;
-            if ($db->update('admin', array('next_status' => '1')))
-                $bot->sendMessage($chatid, 'متن مورد نظر را وارد کنید');
+        case '/' . COMMAND1:
+            if (!isAdmin($chatid, $db)) return;
+            updateStatus($db, $bot, $chatid, 1, 0);
             break;
 
+        //send NEXT message to all
         case COMMAND2:
-        case '/'.COMMAND2:
-            if ($chatid != ADMIN) return;
-            $db->update('admin', array('send_status' => 0));
-            $msg = "پیام زیر برای همه کاربران ارسال خواهد شد. آیا برای ارسال پیامها اطمینان دارید؟\n\n";
-            $db->orderBy('ID', 'DESC');
-            $q = $db->getOne('nextMessages');
-            $msg .= $q['text'];
-            $db->update('admin', array('send_status' => 1));
-            $bot->sendMessage($chatid, $msg);
+        case '/' . COMMAND2:
+            if (!isAdmin($chatid, $db)) return;
+            sendMessageToAll(null, $chatid, 1, $db, $bot);
             break;
 
+        //send custom message to all
         case COMMAND3:
-        case '/'.COMMAND3:
-            if ($chatid != ADMIN) return;
-            $db->update('admin', array('next_status' => 0, 'send_status' => 0));
+        case '/' . COMMAND3:
+            if (!isAdmin($chatid, $db)) return;
+            updateStatus($db, $bot, $chatid, 0, 1);
+            break;
+
+        //cancel current operation
+        case COMMAND4:
+        case '/' . COMMAND4:
+            if (!isAdmin($chatid, $db)) return;
+            $db->update('adminOperations', array('next_status' => 0, 'send_status' => 0));
             $bot->sendMessage($chatid, 'عملیات جاری لغو شد');
             break;
 
         default:
-            if ($chatid != ADMIN) return;
-            $q = $db->getOne('admin');
+            //received message after send operations commands
+            if (!isAdmin($chatid, $db)) return;
+            $q = $db->getOne('adminOperations');
 
-            //send message to all
-            if ($text == 'بله' || $text == 'yes') {
-                if ($q['send_status'] != '1') return;
-                $users = $db->get('users');
-                $db->orderBy('ID', 'DESC');
-                $next = $db->getOne('nextMessages', array('text'));
-                foreach ($users as $user) {
-                    try {
-                        $bot->sendMessage($user['ID'], $next['text']);
-                    } catch (Exception $e) {
-                        error_log($e->getMessage());
-                    }
-                }
-				$db->update('admin', array('next_status' => '0'));
-                $bot->sendMessage($chatid, 'پیام مورد نظر ارسال شد');
-                return;
+            if ($q['next_status'] != 0) {
+                setNextMessage($text, $chatid, $db, $bot);
             }
-
-            //register next message
-            if ($q['next_status'] != '1') return;
-            if ($db->insert('nextMessages', array('text' => $text))) {
-                $bot->sendMessage($chatid, 'پیام مورد نظر ثبت شد');
-                $status = '0';
+            if ($q['send_status'] != 0) {
+                sendMessageToAll($text, $chatid, $q['send_status'], $db, $bot);
             }
-            $db->update('admin', array('next_status' => $status));
     }
 } catch (Exception $e) {
     error_log($e->getMessage());
