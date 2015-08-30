@@ -55,6 +55,7 @@ function sendMessageToAll($text = null, $chatid, $status, $db, $bot)
         foreach ($users as $user) {
             try {
                 $bot->sendMessage($user['ID'], $message);
+				usleep(50000);
             } catch (Exception $e) {
                 error_log($e->getMessage());
             }
